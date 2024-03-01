@@ -1,19 +1,44 @@
-import React from 'react'
+import axios from 'axios';
+import React, { useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
 
 const Cart = () => {
+  
+  const { id } = useParams();
+  const [item, setItem] = useState([]);
+
+  console.log(item);
+  
+  useEffect(() => {
+    async function fetchPosts(){
+      await axios
+      .get(`http://localhost/phpapi/api.php?id=${id}`)
+      .then((res) => {
+        setItem(res.data);
+      })
+      .catch((error) => {
+        console.log(error);
+      })
+      }
+      fetchPosts();
+  },[id]);
+
   return (
-    <div className='container-fluid '>
+     <>
+    {
+      item.length > 0 ? (
+        <div className='container-fluid '>
     <div className='row row-cols-md-2 row-cols-1'>
         <div className='right-side col'>
           <div className='p-5 d-flex justify-content-center align-content-center '>
-        <img src="https://www.designinfo.in/wp-content/uploads/2023/01/Apple-iPhone-14-Pro-Mobile-Phone-493177786-i-1-1200Wx1200H-485x485-optimized.jpeg" className="card-img-top" alt="product"/>
+        <img src={item[0].PRODUCT_IMAGE} alt="product" className='w-100'/>
         </div>
         </div>
         <div className='left-side col'>
           <div className='p-5'>
-          <h1 className='fs-1 fw-bold '>i phone 15</h1>
-          <p className='fs-4 mt-4'>$150</p>
-          <p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Debitis, mollitia eius! Nesciunt nulla consectetur ipsa at dignissimos deleniti excepturi tempore sunt suscipit ullam labore eos tempora praesentium, rerum impedit molestiae.</p>
+          <h1 className='fs-1 fw-bold '>{item[0].PRODUCT_NAME}</h1>
+          <p className='fs-4 mt-4'>{item[0].PRODUCT_PRICE}</p>
+          <p>{item[0].PRODUCT_DE}</p>
           <div className='btnn d-flex gap-5 mt-5 '>
           <button className='btn btn-primary'>Buy now</button>
           <button className='btn btn-warning'>Add to cart</button>
@@ -22,7 +47,13 @@ const Cart = () => {
         </div>
     </div>
     </div>
+      ) : (
+        <p>Loading...</p>
+      )
+    }
+    </>
   )
+  
 }
 
 export default Cart
